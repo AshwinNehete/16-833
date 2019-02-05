@@ -1,2 +1,6 @@
 # 16-833
-Robot SLAM - CMU
+Assignments for Robot SLAM (16-833) @CMU 
+
+If you are currently taking the 16-833 course, I encourage you to try the assignments on your own and preferably not use the code snippets here - since this is a violation of the academic integrity policy of the institute.
+
+If you are here for learning different concepts, please go ahead and refer any snippets.
