@@ -1,0 +1,4 @@
+# do not put in any data files
+
+**/data/
+.DS_Store
