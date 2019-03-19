@@ -7,4 +7,4 @@ If you are here for learning different concepts, please go ahead and refer any s
 
 ### Assignment 1 - Particle Filters (Practicum)
 ### Assignment 2 - Extended Kalman Filter (Practicum)
-### Assignment 3 - Least Squares; Non-LS SLAM Solvers (Practicum)
+### Assignment 3 - Linear and Nonlinear SLAM Solvers (Practicum)
