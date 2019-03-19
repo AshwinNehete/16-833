@@ -6,3 +6,5 @@ If you are currently taking the 16-833 course, I encourage you to try the assign
 If you are here for learning different concepts, please go ahead and refer any snippets.
 
 ### Assignment 1 - Particle Filters (Practicum)
+### Assignment 2 - Extended Kalman Filter (Practicum)
+### Assignment 3 - Least Squares; Non-LS SLAM Solvers (Practicum)
