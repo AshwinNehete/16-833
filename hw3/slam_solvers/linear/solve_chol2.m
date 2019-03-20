@@ -13,14 +13,12 @@
 %
 function [x, R] = solve_chol2(A, b)
 
-[R,p,s] = chol(A'*A, 'vector');
+S_temp = A'*A;
+p = symrcm(S_temp);
+S = S_temp(p,p);
+R = chol(S);
+y = forward_sub(R', A(:,p)'*b);
+x = back_sub(R,y);
+x(p) = x;
 
-if p == 0
-    b_temp = A'*b;
-    b_temp = b_temp(s);
-    y = forward_sub(R', b_temp);
-    x(s) = back_sub(R, y);
-else
-    disp ('p is not zero!!')
-end
 end
