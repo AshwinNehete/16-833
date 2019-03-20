@@ -13,8 +13,14 @@
 %
 function [x, R] = solve_chol2(A, b)
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%% Your code goes here %%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+[R,p,s] = chol(A'*A, 'vector');
 
+if p == 0
+    b_temp = A'*b;
+    b_temp = b_temp(s);
+    y = forward_sub(R', b_temp);
+    x(s) = back_sub(R, y);
+else
+    disp ('p is not zero!!')
+end
 end
