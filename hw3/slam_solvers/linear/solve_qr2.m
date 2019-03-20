@@ -18,6 +18,6 @@ function [x, R] = solve_qr2(A, b)
 
 R = R(1:n,:);
 C = C(1:n);
-x = back_sub(R,C);
+x(e) = back_sub(R,C);
 
 end
