@@ -1,0 +1,27 @@
+Paper Reading 1
+Abhay Gupta (abhayg) - March 22, 2019
+
+
+
+Paper 1 -- Parallel Tracking and Mapping (PTAM) for Small AR Workspaces
+
+PTAM presents an algorithm for estimating camera pose by tracking a hand-held camera for AR workspaces without a prior model world.
+
+PTAM involves two main parallel threads - the tracking of the camera and the mapping of points. The tracking thread is responsible for estimating the camera pose and for rendering when PTAM is used for AR. The mapping thread is responsible for mapping the points. The map is updated only on keyframes, giving time to make the map rich and accurate and only when the background processing thread is free, allowing for tracking complex environments which is essential for AR.
+
+Tracking is performed using template matching (inverse composition) across patches around FAST features and then updating the camera pose using the IRWLS algorithm (using Tukey M-estimator) in a coarse to fine refinement strategy. For mapping, the map is first initialized using the 5-point stereo algorithm. Then continual refinement and iteration are performed by first adding features from the new keyframe using feature matching and triangulation and then using bundle adjustment to jointly optimize the map positions and keyframe poses.
+
+PTAM has two key drawbacks. It cannot handle self-occlusion and is brittle to outliers and stereo initialization.
+
+
+
+
+Paper 2 -- Kinect Fusion: Real-Time Dense Surface Mapping and Tracking
+
+The paper builds on two key technologies of its time - the availability of commodity stereo estimation hardware (Kinect sensor) and the use of GPGPU processing. The second technology helps overcome one limitation of PTAM - its capability to scale to only 1000s of point features in real-time.
+
+Kinect Fusion is essentially two interleaved components. First, it builds a dense surface model from a set of depth frames with estimated camera poses using depth map fusion allowing for scaling to 9.2M (640x480x30) depth measurements/sec using high-end laptop grade GPGPU. It then uses this model to estimate the current camera pose by aligning the depth frame using the Fast ICP algorithm (combination of projective data association and point-plane ICP). 
+
+Kinect Fusion has three fundamental gains over previous algorithms. First, through frame-model tracking, it is essentially drift-free (drift possible in long exploratory loops) and provides higher accuracy tracking. Second, using frame dropping and reduction in voxel resolution, it can be scaled seamlessly even on limited hardware. Finally, it achieves joint geometry and tracking convergence without explicit joint optimization. 
+
+One failure scenario is when a planar scene fills the field of view of the sensor. This leaves 3 of the 6 DoF's of the sensor's motion unconstrained, resulting in tracking drift or failure.

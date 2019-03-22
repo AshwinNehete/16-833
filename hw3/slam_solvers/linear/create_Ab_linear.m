@@ -48,12 +48,10 @@ M = o_dim*(n_odom+1) + m_dim*n_obs;     % +1 for prior on the first pose
 A = zeros(M, N);
 b = zeros(M, 1);
 
-% Add odometry and landmark measurements to A, b - including prior on first
+% Add odometry and landmark measurements to A, b - including prior on first 
 % pose
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%% Your code goes here %%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% Make A a sparse matrix 
+
+% Make A a sparse matrix 
 As = sparse(A);
