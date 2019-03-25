@@ -14,5 +14,5 @@
 function x = solve_pinv(A, b)
     S = A'*A;
     t = A'*b;
-    x = S\t;
+    x = inv(S)*t;
 end

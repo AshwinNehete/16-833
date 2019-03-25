@@ -15,8 +15,8 @@ function slam_2D_linear(method)
 close all; clc; 
 addpath('../util');
 
-load('../../data/2D_linear.mat');
-% load('../../data/2D_linear_loop.mat');
+% load('../../data/2D_linear.mat');
+load('../../data/2D_linear_loop.mat');
 
 if nargin < 1
     method = 'all';
