@@ -50,8 +50,53 @@ b = zeros(M, 1);
 
 % Add odometry and landmark measurements to A, b - including prior on first 
 % pose
+sigma_o = sqrtm(inv(sigma_o));
+sigma_l = sqrtm(inv(sigma_l));
 
+A(1,1) = 1;
+A(2,2) = 1;
+b(1:2, 1) = [0,0];
 
+landmark_state_index_offset = n_poses;
+
+for odom_index = 0:n_odom-1
+    odometry = odom(odom_index+1,:);
+    
+    b(2+odom_index*2+1:2+odom_index*2+2) = sigma_o*odometry';
+    
+    odomJ = [-1 0 1 0; 0 -1 0 1];
+    odomJ = sigma_o * odomJ;
+    
+    A(2 + odom_index * 2 + 1, odom_index * 2 + 1) = odomJ(1, 1);
+    A(2 + odom_index * 2 + 1, odom_index * 2 + 2) = odomJ(1, 2);
+    A(2 + odom_index * 2 + 1, (odom_index + 1) * 2 + 1) = odomJ(1, 3);
+    A(2 + odom_index * 2 + 1, (odom_index + 1) * 2 + 2) = odomJ(1, 4);
+    A(2 + odom_index * 2 + 2, odom_index * 2 + 1) = odomJ(2, 1);
+    A(2 + odom_index * 2 + 2, odom_index * 2 + 2) = odomJ(2, 2);
+    A(2 + odom_index * 2 + 2, (odom_index + 1) * 2 + 1) = odomJ(2, 3);
+    A(2 + odom_index * 2 + 2, (odom_index + 1) * 2 + 2) = odomJ(2, 4);
+end
+
+obs_A_row_offset = p_dim*(n_odom+1);
+for obs_index = 0 : n_obs - 1
+    pose_index = obs(obs_index + 1, 1);
+    landmark_index = obs(obs_index + 1, 2);
+    measurement = obs(obs_index + 1, 3 : 4);
+    
+    b(obs_A_row_offset + obs_index * 2 + 1 : obs_A_row_offset + obs_index * 2 + 2) = sigma_l * measurement';
+    
+    measJ = [-1 0 1 0; 0 -1 0 1];
+    measJ = sigma_l * measJ;
+
+    A(obs_A_row_offset + obs_index * 2 + 1, pose_index * 2 - 1) = measJ(1, 1);
+    A(obs_A_row_offset + obs_index * 2 + 1, pose_index * 2) = measJ(1, 2);
+    A(obs_A_row_offset + obs_index * 2 + 1, (landmark_state_index_offset + landmark_index) * 2 - 1) = measJ(1, 3);
+    A(obs_A_row_offset + obs_index * 2 + 1, (landmark_state_index_offset + landmark_index) * 2) = measJ(1, 4);
+    A(obs_A_row_offset + obs_index * 2 + 2, pose_index * 2 - 1) = measJ(2, 1);
+    A(obs_A_row_offset + obs_index * 2 + 2, pose_index * 2) = measJ(2, 2);
+    A(obs_A_row_offset + obs_index * 2 + 2, (landmark_state_index_offset + landmark_index) * 2 - 1) = measJ(2, 3);
+    A(obs_A_row_offset + obs_index * 2 + 2, (landmark_state_index_offset + landmark_index) * 2) = measJ(2, 4);
+end
 
 % Make A a sparse matrix 
 As = sparse(A);

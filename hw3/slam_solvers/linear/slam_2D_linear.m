@@ -11,18 +11,18 @@
 %     none
 %
 function slam_2D_linear(method)
-%% Load data
+% Load data
 close all; clc; 
 addpath('../util');
 
 load('../../data/2D_linear.mat');
-%load('../../data/2D_linear_loop.mat');
+% load('../../data/2D_linear_loop.mat');
 
 if nargin < 1
     method = 'all';
 end
 
-%% Useful constants
+% Useful constants
 n_poses = size(gt_traj, 1);
 n_landmarks = size(gt_landmarks, 1);
 n_odom = size(odom, 1);
@@ -37,7 +37,7 @@ m_dim = size(observations(1, 3:end), 2);
 N = p_dim*n_poses + l_dim*n_landmarks;
 M = o_dim*(n_odom+1) + m_dim*n_obs;     % +1 for prior on the first pose
 
-%% Create sparse A matrix and b vector 
+% Create sparse A matrix and b vector 
 [A, b] = create_Ab_linear(odom, observations, sigma_odom, sigma_landmark);
 
 if strcmp(method, 'all')
@@ -117,6 +117,5 @@ elseif strcmp(method, 'lsqr')
     [x, ~] = lsqr(A, b, 1e-6, 30, [], [], zeros(N,1));
     [traj, landmarks] = format_solution(x, n_poses, n_landmarks, o_dim, m_dim);
     evaluate_method('LSQR', traj, landmarks, odom, gt_traj, gt_landmarks, true);
-    
 end
 

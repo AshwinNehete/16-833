@@ -13,12 +13,11 @@
 %
 function [x, R] = solve_qr2(A, b)
 
-[~,n] = size(A);
-[C,R,e] = qr(A,b,'vector');
+[~, n] = size(A);
+[C, R, e] = qr(A, b, 'vector');
 
-R = R(1:n,:);
+R = R(1:n, :);
 C = C(1:n);
-x(e) = back_sub(R,C);
-x = x';
+x(e) = back_sub(R, C);
 
 end

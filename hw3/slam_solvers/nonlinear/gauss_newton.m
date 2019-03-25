@@ -40,9 +40,9 @@ while (true)
     err_old = error_nonlinear(x, odom, obs, sigma_o, sigma_l);
     err_new = error_nonlinear(x_new, odom, obs, sigma_o, sigma_l);
     err_delta = err_new - err_old;
-%     fprintf('Norm update: %f\tDelta error: %f\tNew error: %f\tOld error: %f\n', norm(delta), err_delta, err_new, err_old);
+    fprintf('Norm update: %f\tDelta error: %f\tNew error: %f\tOld error: %f\n', norm(delta), err_delta, err_new, err_old);
 
-    %% Update x if it's a good step, otherwise break
+    % Update x if it's a good step, otherwise break
     if (err_delta < 0)
         x = x_new;
     else
@@ -50,7 +50,7 @@ while (true)
         break;
     end
     
-    %% Check end conditions
+    % Check end conditions
     if ( norm(delta) < epsilon1 )
 %         fprintf('Update got too small at iter %d: %f\n', iter, norm(delta));
         break;
@@ -66,7 +66,3 @@ while (true)
     
     iter = iter + 1;
 end
-
-
-
-
