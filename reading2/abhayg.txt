@@ -1,0 +1,29 @@
+Paper Reading 2
+
+Paper 1 - Large-Scale Direct Monocular SLAM
+
+Large-Scale Direct SLAM is a monocular SLAM algorithm. It has three key components - 1) Tracking 2) Depth Map Estimation and 3) Map Optimization
+
+To track, a new image is taken in and the camera pose estimated with respect to the current frame by minimizing the variance-normalized photometric error.
+
+To estimate the depth map, first a weighted threshold selection process if followed to decide if a new keyframe needs to be taken into consideration. If a new keyframe is selected, its depth map is computed using one iteration of spatial regularization and outlier removal. If a new keyframe is not selected, then using stereo comparisons, the current key-frames depth is corrected. The key-frames are finally scaled such that the mean inverse depth is one.
+
+Because keyframes are scaled to ensure a mean inverse depth of one, keyframes are aligned by minimizing an error function based on photometric residual and depth residual. Once the keyframes are added and aligned, using reciprocal tracking check, loop closure is detected with a sufficient number of keyframes. Then the map is optimized using pose graph optimization.
+
+The key novelty in this paper lies in using sim(3) tracking, which helps detect scale drifting and incorporating the values of noisy depth values into tracking through a probabilistic formulation.
+
+
+
+Paper 2 - ORB SLAM: A Versatile and Accurate MonocularSLAM System
+
+ORB-SLAM is a feature based SLAM, which relies on using the fast-to-extract and rotation invariant ORB features. There are four key parts to this algorithm - 1) Map initialization 2) Tracking 3) Local Mapping and 4) Loop Closure.
+
+To initialize the map, a homography of planar scenes and a fundamental matrix of non-planar scenes are computed and one of them is selected based on relative scoring. This enables estimation of multiple motion hypotheses and initializes the map.
+
+The tracking part localizes the camera and decides when to insert a new keyframe. Features are matched with the previous frame and the pose is optimized using motion-only bundle adjustment
+
+To locally map, a new keyframe is added to the co-visibility graph, linked to keyframes with most common points and a bag-of-words created for the features. The keyframe then undergoes a triangulation and epipolar sanity check, followed by which a likelihood test for features is performed. Then local bundle adjustment helps to optimize existing keyframes and redundant frames discarded.
+
+To close loops, keyframe removal based on minimum similarity is performed (using RANSAC to compute 7DoF similarity). This is followed by iterative refinement of correspondences. When similarity has sufficient inliers, the loop is considered closed. This is followed by a pose graph optimization over the essential graph (removes loop closure errors), which corrects scale-drift.
+
+The paper's novelty to spawn and cull keyframes permits to create keyframes every few frames, which are eventually removed when considered redundant. This flexible map expansion is really useful in poorly conditioned exploration trajectories.
