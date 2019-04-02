@@ -1,4 +1,4 @@
-function [tform valid_pair_num error] = getRigidTransform(new_pointcloud, ref_pointcloud, ref_normals)
+function [tform, valid_pair_num, error] = getRigidTransform(new_pointcloud, ref_pointcloud, ref_normals)
     
     %==== Initialize parameters ====
     iter_num = 6;
@@ -30,21 +30,23 @@ function [tform valid_pair_num error] = getRigidTransform(new_pointcloud, ref_po
         %==== (Notice: the format of the desired 6-vector is: xi = [beta gamma alpha t_x t_y t_z]') ====
 
         % Write your code here...
-        for i = 1:m
-            for j = 1:n
-                if all(assoc_pts(i,j,:) == 0)
+        for i = 1 : m
+            for j = 1 : n
+                if all(assoc_pts(i, j, :) == 0)
                     continue;
                 end
-
-                G = [toSkewSym(assoc_pts(i,j,:)) eye(3)];
-                N = reshape(ref_normals(i,j,:), [3,1]);
-
-                A((i-i)*n+j, :) = N'*G;
-                b((i-1)*n+j, :) = N'*reshape((ref_pts(i,j,:) - assoc_pts(i,j,:)), [3,1]);
-
-                valid_pair_num = valid_pair_num + 1
+                
+                G = [toSkewSym(assoc_pts(i, j, :)) eye(3)];
+                N = reshape(ref_normals(i, j, :), [3, 1]);
+                
+                A((i - 1) * n + j, :) = N' * G;
+                b((i - 1) * n + j, :) = N' * reshape((ref_pts(i, j, :) - assoc_pts(i, j, :)), [3, 1]);
+                
+                % update the counter
+                valid_pair_num  = valid_pair_num + 1;
             end
         end
+        
         
         %==== TODO: Solve for the 6-vector xi[] of rigid body transformation ====
 
@@ -61,7 +63,7 @@ function [tform valid_pair_num error] = getRigidTransform(new_pointcloud, ref_po
         %==== Coerce xi[] back into SE(3) ====
         %==== (Notice: tmp_tform[] is defined in the format of right-multiplication) ====
         R = toSkewSym(xi(1:3)) + eye(3);
-        [U,S,V] = svd(R);
+        [U,~,V] = svd(R);
         R = U*V';
         T = [R [0 ; 0 ; 0] ; [xi(4:6)' 1]];
         tmp_tform = affine3d(T);

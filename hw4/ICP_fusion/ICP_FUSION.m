@@ -17,7 +17,7 @@ if ~exist('seq_param_loaded')
 end
 
 %==== TEST: Debug ICP or point-based fusion (0: false, 1: true)====
-is_debug_icp = 1;
+is_debug_icp = 0;
 is_debug_fusion = 0;
 is_eval = 1;
 
@@ -73,7 +73,7 @@ for t = 1:T
         
         %==== 1) Apply point-to-plane ICP to register the input pointcloud to the reference pointcloud ====
         if is_debug_fusion == 0
-            [tform inliers error] = getRigidTransform(new_pointcloud, ref_pointcloud, ref_normals);
+            [tform, inliers, error] = getRigidTransform(new_pointcloud, ref_pointcloud, ref_normals);
             fprintf(' (ICP final iteration: inliers = %d, RMSE = %d)', inliers, error);
         
         %==== DEBUG 1): A built-in registration function for debugging point-based fusion only ====
