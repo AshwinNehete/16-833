@@ -747449,3 +747449,33 @@ ______________________________________________________________________
 Number of points in the final model = 1072357 
 Compression ratio = 13.43 % 
 Total time spent = 6.90 sec 
+Frame#: 1 (ICP and Point-based fusion initialized)
+Frame#: 2 (ICP final iteration: inliers = 1186, RMSE = 9.847533e-03)
+Frame#: 3 (ICP final iteration: inliers = 1188, RMSE = 9.583632e-03)
+Frame#: 4 (ICP final iteration: inliers = 1127, RMSE = 1.129638e-02)
+Frame#: 5 (ICP final iteration: inliers = 1133, RMSE = 1.185446e-02)
+Frame#: 6 (ICP final iteration: inliers = 1191, RMSE = 1.053552e-02)
+Frame#: 7 (ICP final iteration: inliers = 1191, RMSE = 1.048266e-02)
+Frame#: 8 (ICP final iteration: inliers = 1196, RMSE = 9.993487e-03)
+Frame#: 9 (ICP final iteration: inliers = 1182, RMSE = 9.450437e-03)
+Frame#: 10 (ICP final iteration: inliers = 1176, RMSE = 9.799457e-03)
+Frame#: 11 (ICP final iteration: inliers = 1157, RMSE = 9.734672e-03)
+Frame#: 12 (ICP final iteration: inliers = 1144, RMSE = 9.945223e-03)
+Frame#: 13 (ICP final iteration: inliers = 1197, RMSE = 8.922528e-03)
+Frame#: 14 (ICP final iteration: inliers = 1185, RMSE = 9.267751e-03)
+Frame#: 15 (ICP final iteration: inliers = 1149, RMSE = 1.026114e-02)
+Frame#: 16 (ICP final iteration: inliers = 1170, RMSE = 1.004609e-02)
+Frame#: 17 (ICP final iteration: inliers = 1193, RMSE = 9.917570e-03)
+Frame#: 18 (ICP final iteration: inliers = 1117, RMSE = 1.172892e-02)
+Frame#: 19 (ICP final iteration: inliers = 1187, RMSE = 9.897823e-03)
+Frame#: 20 (ICP final iteration: inliers = 1192, RMSE = 8.437463e-03)
+Frame#: 21 (ICP final iteration: inliers = 1174, RMSE = 8.906421e-03)
+Frame#: 22 (ICP final iteration: inliers = 1186, RMSE = 9.284462e-03)
+Frame#: 23 (ICP final iteration: inliers = 1164, RMSE = 1.019167e-02)
+Frame#: 24 (ICP final iteration: inliers = 1186, RMSE = 1.010602e-02)
+Frame#: 25 (ICP final iteration: inliers = 1192, RMSE = 9.092112e-03)
+Frame#: 26 (ICP final iteration: inliers = 1194, RMSE = 9.015163e-03)
+______________________________________________________________________
+Number of points in the final model = 1072357 
+Compression ratio = 13.43 % 
+Total time spent = 14.18 sec 

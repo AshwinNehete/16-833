@@ -18,14 +18,14 @@ function [proj_map, proj_flag] = projMapToFrame(fusion_map, h, w, tform, cam_par
     cy = cam_param(4);
 
     K = [fx 0 cx; 0 fy cy; 0 0 1];
-    MapPointsCameraFrame = pctransform(fusion_map.pointcloud, tform.invert);
+    pointsCameraFrame = pctransform(fusion_map.pointcloud, tform.invert);
 
     proj_flag = true([size(fusion_map.pointcloud.Location, 1), 1]);
-    in_front_mask = (MapPointsCameraFrame.Location(:, 3) > 0);
+    in_front_mask = (pointsCameraFrame.Location(:, 3) > 0);
 
     proj_flag = and(proj_flag, in_front_mask);
     in_front_mask = repmat(in_front_mask, 1, 3);
-    valid_points = MapPointsCameraFrame.Location .* in_front_mask;
+    valid_points = pointsCameraFrame.Location .* in_front_mask;
 
     pts_proj = (K*reshape(valid_points(in_front_mask), [], 3)')';
     pts_proj = pts_proj ./ pts_proj(:, 3);
@@ -40,24 +40,33 @@ function [proj_map, proj_flag] = projMapToFrame(fusion_map, h, w, tform, cam_par
     proj_normals = zeros(h * w, 3);
     proj_ccounts = zeros(h * w, 1);
     proj_times = zeros(h* w, 1);
-
-    pixel_points = reshape(fusion_map.pointcloud.Location(repmat(proj_flag, 1, 3)), [], 3);
-    pixel_colors = reshape(fusion_map.pointcloud.Color(repmat(proj_flag, 1, 3)), [], 3);
-    pixel_normals = reshape(fusion_map.normals(repmat(proj_flag, 1, 3)), [], 3);
-    pixel_ccounts = fusion_map.ccounts(proj_flag);
-    pixel_times = fusion_map.times(proj_flag);
+    
+    % locations projection
     pixel_locations = reshape(valid_points(repmat(proj_flag, 1, 3)), [], 3);
 
+    % pixel point projection
+    pixel_points = reshape(fusion_map.pointcloud.Location(repmat(proj_flag, 1, 3)), [], 3);
     proj_points(pixel_locations(:, 1) * h + pixel_locations(:, 2) + 1, :) = pixel_points;
-    proj_colors(pixel_locations(:, 1) * h + pixel_locations(:, 2) + 1, :) = pixel_colors;
-    proj_normals(pixel_locations(:, 1) * h + pixel_locations(:, 2) + 1, :) = pixel_normals;
-    proj_ccounts(pixel_locations(:, 1) * h + pixel_locations(:, 2) + 1) = pixel_ccounts;
-    proj_times(pixel_locations(:, 1) * h + pixel_locations(:, 2) + 1) = pixel_times;
-
     proj_points = reshape(proj_points, [h, w, 3]);
+    
+    % colors projection
+    pixel_colors = reshape(fusion_map.pointcloud.Color(repmat(proj_flag, 1, 3)), [], 3);
+    proj_colors(pixel_locations(:, 1) * h + pixel_locations(:, 2) + 1, :) = pixel_colors;
     proj_colors = reshape(proj_colors, [h, w, 3]);
+
+    % normals projection
+    pixel_normals = reshape(fusion_map.normals(repmat(proj_flag, 1, 3)), [], 3);
+    proj_normals(pixel_locations(:, 1) * h + pixel_locations(:, 2) + 1, :) = pixel_normals;
     proj_normals = reshape(proj_normals, [h, w, 3]);
+
+    % ccounts projection
+    pixel_ccounts = fusion_map.ccounts(proj_flag);
+    proj_ccounts(pixel_locations(:, 1) * h + pixel_locations(:, 2) + 1) = pixel_ccounts;
     proj_ccounts = reshape(proj_ccounts, [h, w, 1]);
+
+    % time projection
+    pixel_times = fusion_map.times(proj_flag);
+    proj_times(pixel_locations(:, 1) * h + pixel_locations(:, 2) + 1) = pixel_times;
     proj_times = reshape(proj_times, [h, w, 1]);
 
     %==== Output the projected map in a struct ====

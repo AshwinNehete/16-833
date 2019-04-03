@@ -115,7 +115,9 @@ end
 plotTrajAndMap(positions, fusion_map);
 
 %==== EVAL: Visualize normals, ccounts, and times ====
-plotEvalMaps(fusion_map, is_eval);
+if (is_eval == 1)
+    plotEvalMaps(fusion_map, is_eval);
+end
 
 %==== Display final results ====
 format short;

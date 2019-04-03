@@ -39,20 +39,19 @@ function [tform, valid_pair_num, error] = getRigidTransform(new_pointcloud, ref_
                 G = [toSkewSym(assoc_pts(i, j, :)) eye(3)];
                 N = reshape(ref_normals(i, j, :), [3, 1]);
                 
-                A((i - 1) * n + j, :) = N' * G;
-                b((i - 1) * n + j, :) = N' * reshape((ref_pts(i, j, :) - assoc_pts(i, j, :)), [3, 1]);
+                A((i-1)*n+j, :) = N'*G;
+                b((i-1)*n+j, :) = N'*reshape((ref_pts(i, j, :) - assoc_pts(i, j, :)), [3, 1]);
                 
                 % update the counter
                 valid_pair_num  = valid_pair_num + 1;
             end
         end
         
-        
         %==== TODO: Solve for the 6-vector xi[] of rigid body transformation ====
 
         % Write your code here...
         if rank(A) < min(size(A))
-            fprintf('\t[ICP] System is under-determined (rank %d) !!', rank(A));
+            fprintf('\t System is under-determined (rank %d) !!', rank(A));
         end
 
         As = sparse(A);

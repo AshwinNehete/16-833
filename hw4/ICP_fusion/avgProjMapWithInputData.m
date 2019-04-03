@@ -15,34 +15,46 @@ function updated_map = avgProjMapWithInputData(proj_map, input_data, alpha, h, w
 
     % Write your code here...
     is_use = reshape(is_use, [h*w, 1]);
-    updated_points = reshape(proj_points, [h*w, 3]);
     updated_colors = reshape(proj_colors, [h*w, 3]);
     updated_normals = reshape(proj_normals, [h*w, 3]);
     updated_ccounts = reshape(proj_ccounts, [h*w, 1]);
     updated_times = reshape(proj_times, [h*w, 1]);
+    
+    
+    % usable alpha
     input_alpha = reshape(alpha, [h*w, 1]);
-    
-    % Update
-    usable_points = reshape(updated_points(repmat(is_use, 1, 3)), [], 3);
-    usable_input_pts = reshape(input_points(repmat(is_use, 1, 3)), [], 3);
-    usable_normals = reshape(updated_normals(repmat(is_use, 1, 3)), [], 3);
-    usable_input_normals = reshape(input_normals(repmat(is_use, 1, 3)), [], 3);
-    usable_ccounts = updated_ccounts(is_use);
     usable_alpha = input_alpha(is_use);
-    
-    updated_points(repmat(is_use, 1, 3)) = reshape((usable_ccounts .* usable_points + usable_alpha .* usable_input_pts) ./ (usable_ccounts + usable_alpha), [] ,1);
-    updated_colors(repmat(is_use, 1, 3)) = input_colors(repmat(is_use, 1, 3));
-    updated_normals(repmat(is_use, 1, 3)) = reshape((usable_ccounts .* usable_normals + usable_alpha .* usable_input_normals) ./ (usable_ccounts + usable_alpha), [] ,1);
+
+    % usable ccounts
+    usable_ccounts = updated_ccounts(is_use);
     updated_ccounts(is_use) = usable_ccounts + usable_alpha;
-    updated_times(is_use) = t;
-    
-    updated_points = reshape(updated_points, [h, w, 3]);
-    updated_colors = reshape(updated_colors, [h, w, 3]);
-    updated_normals = reshape(updated_normals, [h, w, 3]);
     updated_ccounts = reshape(updated_ccounts, [h, w, 1]);
+
+    % Usable input pts
+    usable_input_pts = reshape(input_points(repmat(is_use, 1, 3)), [], 3);
+
+    % usable input normals
+    usable_input_normals = reshape(input_normals(repmat(is_use, 1, 3)), [], 3);
+    
+    % color update
+    updated_colors(repmat(is_use, 1, 3)) = input_colors(repmat(is_use, 1, 3));
+    updated_colors = reshape(updated_colors, [h, w, 3]);
+
+    % time update
+    updated_times(is_use) = t;
     updated_times = reshape(updated_times, [h, w, 1]);
+
+    % usable points
+    updated_points = reshape(proj_points, [h*w, 3]);
+    usable_points = reshape(updated_points(repmat(is_use, 1, 3)), [], 3);
+    updated_points(repmat(is_use, 1, 3)) = reshape((usable_ccounts .* usable_points + usable_alpha .* usable_input_pts) ./ (usable_ccounts + usable_alpha), [] ,1);
+    updated_points = reshape(updated_points, [h, w, 3]);
+    
+    % usable normals
+    usable_normals = reshape(updated_normals(repmat(is_use, 1, 3)), [], 3);
+    updated_normals(repmat(is_use, 1, 3)) = reshape((usable_ccounts .* usable_normals + usable_alpha .* usable_input_normals) ./ (usable_ccounts + usable_alpha), [] ,1);
+    updated_normals = reshape(updated_normals, [h, w, 3]);   
     
     %==== Output the updated projected map in a struct ====
     updated_map = struct('points', updated_points, 'colors', updated_colors, 'normals', updated_normals, 'ccounts', updated_ccounts, 'times', updated_times);
-        
 end
