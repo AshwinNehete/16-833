@@ -19,7 +19,7 @@ end
 %==== TEST: Debug ICP or point-based fusion (0: false, 1: true)====
 is_debug_icp = 0;
 is_debug_fusion = 0;
-is_eval = 1;
+is_eval = 0;
 
 %==== Set start time ====
 tic;
