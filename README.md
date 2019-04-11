@@ -5,6 +5,7 @@ If you are currently taking the 16-833 course, I encourage you to try the assign
 
 If you are here for learning different concepts, please go ahead and refer any snippets.
 
-### Assignment 1 - Particle Filters (Practicum)
-### Assignment 2 - Extended Kalman Filter (Practicum)
-### Assignment 3 - Linear and Nonlinear SLAM Solvers (Practicum)
+### Assignment 1 - Particle Filters (Practicum, Python)
+### Assignment 2 - Extended Kalman Filter (Practicum, MATLAB)
+### Assignment 3 - Linear and Nonlinear SLAM Solvers (Practicum, MATLAB)
+### Assignment 4 - ICP and Point-Based Fusion (Practicum, MATLAB)
