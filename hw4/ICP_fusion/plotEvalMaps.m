@@ -34,6 +34,5 @@ function plotEvalMaps(fusion_map, is_eval)
         t_color = cat(2, t_color, ones(fusion_map.pointcloud.Count, 1));
         t_pointcloud = pointCloud(pts, 'Color', im2uint8(t_color/max(max(t_color))));
         showPointCloud(t_pointcloud);
-        
     end
 end

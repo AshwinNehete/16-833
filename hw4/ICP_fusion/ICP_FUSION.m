@@ -19,13 +19,15 @@ end
 %==== TEST: Debug ICP or point-based fusion (0: false, 1: true)====
 is_debug_icp = 0;
 is_debug_fusion = 0;
-is_eval = 0;
+is_eval = 1;
 
 %==== Set start time ====
 tic;
 
 %==== Start recording new summary file ====
-delete summary.txt;
+if exist('summary.txt', 'file') == 2
+    delete summary.txt;
+end
 diary off;
 diary on;
 
