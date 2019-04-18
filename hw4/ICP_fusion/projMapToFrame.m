@@ -16,62 +16,53 @@ function [proj_map, proj_flag] = projMapToFrame(fusion_map, h, w, tform, cam_par
     fy = cam_param(2);
     cx = cam_param(3);
     cy = cam_param(4);
-
+    
+    tform = inv(tform.T');
+    tform = tform(1:3, :);
     K = [fx 0 cx; 0 fy cy; 0 0 1];
-    pointsCameraFrame = pctransform(fusion_map.pointcloud, tform.invert);
-
-    proj_flag = true([size(fusion_map.pointcloud.Location, 1), 1]);
-    in_front_mask = (pointsCameraFrame.Location(:, 3) > 0);
-
-    proj_flag = and(proj_flag, in_front_mask);
-    in_front_mask = repmat(in_front_mask, 1, 3);
-    valid_points = pointsCameraFrame.Location .* in_front_mask;
-
-    pts_proj = (K*reshape(valid_points(in_front_mask), [], 3)')';
-    pts_proj = pts_proj ./ pts_proj(:, 3);
-    valid_points(in_front_mask) = reshape(pts_proj, [], 1);
-
-    in_boundary_mask = valid_points(:,1) > 0 & valid_points(:,1) < h & valid_points(:,2) > 0 & valid_points(:,2) < w;
-    valid_points = ceil(valid_points);
-    proj_flag = and(proj_flag, in_boundary_mask);
-
-    proj_points = zeros(h * w, 3);
-    proj_colors = zeros(h * w, 3);
-    proj_normals = zeros(h * w, 3);
-    proj_ccounts = zeros(h * w, 1);
-    proj_times = zeros(h* w, 1);
     
-    % locations projection
-    pixel_locations = reshape(valid_points(repmat(proj_flag, 1, 3)), [], 3);
-
-    % pixel point projection
-    pixel_points = reshape(fusion_map.pointcloud.Location(repmat(proj_flag, 1, 3)), [], 3);
-    proj_points(pixel_locations(:, 1) * h + pixel_locations(:, 2) + 1, :) = pixel_points;
-    proj_points = reshape(proj_points, [h, w, 3]);
+    locs = fusion_map.pointcloud.Location;
+    locs_t = vertcat(locs', ones(1, size(locs,1)));
     
-    % colors projection
-    pixel_colors = reshape(fusion_map.pointcloud.Color(repmat(proj_flag, 1, 3)), [], 3);
-    proj_colors(pixel_locations(:, 1) * h + pixel_locations(:, 2) + 1, :) = pixel_colors;
-    proj_colors = reshape(proj_colors, [h, w, 3]);
-
-    % normals projection
-    pixel_normals = reshape(fusion_map.normals(repmat(proj_flag, 1, 3)), [], 3);
-    proj_normals(pixel_locations(:, 1) * h + pixel_locations(:, 2) + 1, :) = pixel_normals;
-    proj_normals = reshape(proj_normals, [h, w, 3]);
-
-    % ccounts projection
-    pixel_ccounts = fusion_map.ccounts(proj_flag);
-    proj_ccounts(pixel_locations(:, 1) * h + pixel_locations(:, 2) + 1) = pixel_ccounts;
-    proj_ccounts = reshape(proj_ccounts, [h, w, 1]);
-
-    % time projection
-    pixel_times = fusion_map.times(proj_flag);
-    proj_times(pixel_locations(:, 1) * h + pixel_locations(:, 2) + 1) = pixel_times;
-    proj_times = reshape(proj_times, [h, w, 1]);
+    proj_points_full = K*tform*locs_t;
+    proj_points_full = proj_points_full';
+    positive_depth_idx = find(proj_points_full(:,3)>0);
+    
+    proj_points_full = proj_points_full ./ proj_points_full(:,3);
+    proj_points_full = round(proj_points_full);
+    
+    [~, unique_idx, ~] = unique(proj_points_full, 'rows');
+    x_bounds = and(proj_points_full(:,1)>0, proj_points_full(:,1)<=w);
+    y_bounds = and(proj_points_full(:,2)>0, proj_points_full(:,2)<=h);
+    bounds_idx = find(and(x_bounds, y_bounds));
+    valid_idx = intersect(bounds_idx, intersect(unique_idx, positive_depth_idx));
+    
+    x = proj_points_full(valid_idx, 1);
+    y = proj_points_full(valid_idx, 2);
+    out_idx = sub2ind([h w], y, x);
+    
+    proj_points = zeros(h*w, 3);
+    proj_normals = zeros(h*w, 3);
+    proj_colors = zeros(h*w, 3);
+    proj_ccounts = zeros(h*w, 1);
+    proj_times = zeros(h*w, 1);
+    
+    proj_points(out_idx, :) = locs(valid_idx, 1:3);
+    proj_normals(out_idx, :) = fusion_map.normals(valid_idx, 1:3);
+    proj_colors(out_idx, :) = fusion_map.pointcloud.Color(valid_idx, 1:3);
+    proj_ccounts(out_idx, :) = fusion_map.ccounts(valid_idx);
+    proj_times(out_idx, :) = fusion_map.times(valid_idx);
+    
+    proj_points = reshape(proj_points, h, w, 3);
+    proj_normals = reshape(proj_normals, h, w, 3);
+    proj_colors = reshape(proj_colors, h, w, 3);
+    proj_ccounts = reshape(proj_ccounts, h, w);
+    proj_times = reshape(proj_times, h, w);
 
     %==== Output the projected map in a struct ====
     %==== (Notice: proj_points[], proj_colors[], and proj_normals[] are all 3D matrices with size h*w*3) ====
     %==== (Notice: proj_ccounts[] and proj_times[] are both 2D matrices with size h*w) ====
+    proj_flag = valid_idx;
     proj_map = struct('points', proj_points, 'colors', proj_colors, 'normals', proj_normals, 'ccounts', proj_ccounts, 'times', proj_times);
         
 end
