@@ -27,4 +27,4 @@ Frame#: 26 (ICP final iteration: inliers = 1168, RMSE = 8.871805e-03)
 ______________________________________________________________________
 Number of points in the final model = 920309 
 Compression ratio = 11.52 % 
-Total time spent = 15.94 sec 
+Total time spent = 15.94 sec
