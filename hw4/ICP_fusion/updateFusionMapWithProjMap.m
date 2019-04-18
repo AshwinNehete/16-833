@@ -3,33 +3,39 @@ function fusion_map = updateFusionMapWithProjMap(fusion_map, updated_map, h, w, 
     %==== TODO: Merge the updated map with the remaining part of the old fusion map ====
 
     % Write your code here...
-    not_proj_flag = not(proj_flag);
+    map_points = fusion_map.pointcloud.Location;
+    map_colors = fusion_map.pointcloud.Color;
+    map_normals = fusion_map.normals;
+    map_ccounts = fusion_map.ccounts;
+    map_times = fusion_map.times;
 
-    % point cloud manipulation
-    not_proj_points = reshape(fusion_map.pointcloud.Location(repmat(not_proj_flag, 1, 3)), [], 3);
-    reshaped_points = reshape(updated_map.points, [h * w, 3]);
-    map_points = cat(1, not_proj_points, reshaped_points);
-
-    % colors manipulation
-    not_proj_colors = reshape(fusion_map.pointcloud.Color(repmat(not_proj_flag, 1, 3)), [], 3);
-    reshaped_colors = reshape(updated_map.colors, [h * w, 3]);
-    map_colors = cat(1, not_proj_colors, reshaped_colors);
-
-    % normals manipulation
-    not_proj_normals = reshape(fusion_map.normals(repmat(not_proj_flag, 1, 3)), [], 3);
-    reshaped_normals = reshape(updated_map.normals, [h * w,3]);
-    map_normals = cat(1, not_proj_normals, reshaped_normals);
-
-    % ccounts manipulation
-    not_proj_ccounts = fusion_map.ccounts(not_proj_flag);
-    reshaped_ccounts = reshape(updated_map.ccounts, [h * w, 1]);
-    map_ccounts = cat(1, not_proj_ccounts, reshaped_ccounts);
-
-    % time manipulation
-    not_proj_times = fusion_map.times(not_proj_flag);
-    reshaped_times = reshape(updated_map.times, [h * w, 1]);
-    map_times = cat(1, not_proj_times, reshaped_times);
+    proj_flag_b = zeros(length(proj_flag), 1);
+    proj_flag_b(proj_flag) = 1;
+    map_points  = map_points(~proj_flag_b, :);
+    map_colors  = map_colors(~proj_flag_b, :);
+    map_normals = map_normals(~proj_flag_b, :);
+    map_ccounts = map_ccounts(~proj_flag_b, :);
+    map_times = map_times(~proj_flag_b, :);
     
+    updated_map_points  = reshape(updated_map.points, [ ], 3);
+    updated_map_colors  = reshape(updated_map.colors, [ ], 3);
+    updated_map_normals = reshape(updated_map.normals, [ ], 3);
+    updated_map_ccounts = reshape(updated_map.ccounts, [ ], 1);
+    updated_map_times = reshape(updated_map.times, [ ], 1);
+
+    valid_updates = ~all(updated_map_points == 0, 2);
+    updated_map_points  = updated_map_points(valid_updates, :);
+    updated_map_colors  = updated_map_colors(valid_updates, :);
+    updated_map_normals = updated_map_normals(valid_updates, :);
+    updated_map_ccounts = updated_map_ccounts(valid_updates, :);
+    updated_map_times   = updated_map_times(valid_updates, :);
+    
+    map_points  = [map_points; updated_map_points];
+    map_colors  = [map_colors; updated_map_colors];
+    map_normals = [map_normals; updated_map_normals];
+    map_ccounts = [map_ccounts; updated_map_ccounts];
+    map_times = [ map_times; updated_map_times];
+
     %==== Output the final point-based fusion map in a struct ====
     map_pointcloud = pointCloud(map_points, 'Color', map_colors);
     fusion_map = struct('pointcloud', map_pointcloud, 'normals', map_normals, 'ccounts', map_ccounts, 'times', map_times);
